@@ -1,0 +1,89 @@
+`ifndef DEFS_DONE
+	`define DEFS_DONE
+package definitions;
+//parameter data_width = 64;
+parameter Total_Nodes = 4;
+parameter	DLC_SIZE=4;
+
+
+parameter bit [DLC_SIZE-1:0] DLC=8;
+localparam	DATA_SIZE=(DLC*8);
+
+parameter	EOF_SIZE=7;
+parameter	CRC_SIZE=15;
+parameter	ID_SIZE=11;
+parameter	DELIM_SIZE=8;
+parameter	FLAG_SIZE=6;
+
+parameter	DATA_START=19;
+const bit [CRC_SIZE:0] CRC_Poly=16'hC599;
+
+typedef struct packed{
+logic [EOF_SIZE-1:0] EOF;
+logic ACK_Delim;
+logic ACK;
+logic CRC_Delim;
+logic [CRC_SIZE-1:0] CRC;
+logic [DATA_SIZE-1:0] Data;
+logic [DLC_SIZE-1:0] DLC;
+logic R0;
+logic IDE;
+logic RTR;
+logic [ID_SIZE-1:0] ID;
+logic SOF;
+}Data_Frame;
+
+typedef struct packed{
+logic [EOF_SIZE-1:0] EOF;
+logic ACK_Delim;
+logic ACK;
+logic CRC_Delim;
+logic [CRC_SIZE-1:0] CRC;
+logic [DLC_SIZE-1:0] DLC;
+logic R0;
+logic IDE;
+logic RTR;
+logic [ID_SIZE-1:0] ID;
+logic SOF;
+}Req_Frame;
+
+typedef union{
+Data_Frame Data;
+Req_Frame Req;
+}Can_packet;
+
+
+typedef struct packed{
+logic [DELIM_SIZE-1:0] Delim;
+logic [FLAG_SIZE-1:0] Flag;
+}Error_Frame;
+
+typedef enum{BUS_RST,READ_PACKET,FORMAT_PACKET,CRC_GEN,BIT_SERIALIZE,BUS_IDLE_CHECK,ARBITRATE,MASTER,IFS,SLAVE,Tx_ERROR,Rx_ERROR,ERROR_TRANSMIT,BUS_OFF} state_t;
+typedef enum{ACTIVE,PASSIVE} errorstate_t;
+
+localparam REQ_ACK_SLOT=36;
+localparam	REQ_FRAME_SIZE=43;
+localparam	REQ_CRC_LEN=18;
+localparam DATA_ACK_SLOT=(DATA_SIZE+REQ_ACK_SLOT);
+localparam	DATA_FRAME_SIZE=(DATA_SIZE+REQ_FRAME_SIZE);
+localparam	DATA_CRC_LEN=(DATA_SIZE+REQ_CRC_LEN);
+
+parameter	BUS_IDLE_COUNT=4;
+parameter STUFF_COUNT=4;
+parameter	ARB_LENGTH=12;
+parameter	IFS_LENGTH=3;
+parameter	ERROR_STEP=8;
+parameter	ACTIVE_THRESHOLD=127;
+parameter	PASSIVE_THRESHOLD=256;
+
+`define RTR_BIT	CRC_array[12]
+//`define ERROR_INJECT
+`define DATA_PACKET	Tx_packet[0]
+`define DOM	1'b0
+`define REC	1'b1
+`define ERROR_BIT	Tx_packet[5]
+`define RTR_BIT	CRC_array[12]
+endpackage
+
+import definitions::*;
+`endif
