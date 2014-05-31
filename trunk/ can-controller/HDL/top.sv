@@ -25,6 +25,8 @@ module top();
 	
 	can_bus bus (data);
 	
+	Monitor M1 ( .*) ; 				// connect bus, clock , ACK and BIT_CHK and reset signals to Monitor
+	
 	can		c0(.*,.In_packet(In_packet[0]),.Rx_packet(Rx_packet[0]),.Tx_ID(Tx_ID[0]),.Rx_ID(Rx_ID[0]),
 	                  .data_in_req(data_in_req[0]),.data_out_req(data_out_req[0]),.data(data[0]),
 	                   .Retransmit(Retransmit[0])
