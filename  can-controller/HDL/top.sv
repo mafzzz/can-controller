@@ -5,34 +5,42 @@ module top();
 	bit clock;
 	bit reset;
 	
-	logic [Total_Nodes-1:0] data_in_req,data_out_req,data,SLAVE_ACK,Retransmit,bitchk_en;
+	logic [Total_Nodes-1:0] data_in_req,data_out_req,data,Retransmit;
 	bit [DATA_SIZE-1:0] In_packet[0:Total_Nodes-1],Rx_packet[0:Total_Nodes-1];
 	bit [ID_SIZE-1:0] Tx_ID[0:Total_Nodes-1], Rx_ID[0:Total_Nodes-1];
 	
 	 bit [ID_SIZE-1:0] ID[0:Total_Nodes-1]='{11'h001,11'h7FF,11'h111,11'h10A};
 	longint	input_data[]='{64'hFFFFEEEE0000FEF1,64'hAAAABBBBCCCC0021};
 	longint	output_data[$];
-	state_t state;
 	int	count[int]='{default:0};
 	bit preserve_id=0;
 	
+	`ifdef ASSERT_EN
+	logic [Total_Nodes-1:0] SLAVE_ACK,bitchk_en;
 	wire ACK=|SLAVE_ACK;
 	wire BIT_CHK=|bitchk_en;
+	`endif
 	
 	clock_gen cg1(.clock);
 	
 	can_bus bus (data);
 	
-	can		c0(.*,.In_packet(In_packet[0]),.Rx_packet(Rx_packet[0]),.Tx_ID(Tx_ID[0]),.Rx_ID(Rx_ID[0]),.bitchk_en(bitchk_en[0]),
+	can		c0(.*,.In_packet(In_packet[0]),.Rx_packet(Rx_packet[0]),.Tx_ID(Tx_ID[0]),.Rx_ID(Rx_ID[0]),
 	                  .data_in_req(data_in_req[0]),.data_out_req(data_out_req[0]),.data(data[0]),
-	                   .Retransmit(Retransmit[0]),.SLAVE_ACK(SLAVE_ACK[0]));
+	                   .Retransmit(Retransmit[0])
+	                   `ifdef ASSERT_EN
+	                   ,.bitchk_en(bitchk_en[0]),.SLAVE_ACK(SLAVE_ACK[0])
+	                   `endif);
 	                   
 	genvar i;
 	generate
 	for(i=1;i<=Total_Nodes-1;i++)
 	begin
-	can		c (.*,.In_packet(In_packet[i]),.Rx_packet(Rx_packet[i]),.Tx_ID(Tx_ID[i]),.Rx_ID(Rx_ID[i]),.bitchk_en(bitchk_en[i]),
-	         .data_in_req(data_in_req[i]),.data_out_req(data_out_req[i]),.data(data[i]),.Retransmit(Retransmit[i]),.SLAVE_ACK(SLAVE_ACK[i]));
+	can		c (.*,.In_packet(In_packet[i]),.Rx_packet(Rx_packet[i]),.Tx_ID(Tx_ID[i]),.Rx_ID(Rx_ID[i]),
+	         .data_in_req(data_in_req[i]),.data_out_req(data_out_req[i]),.data(data[i]),.Retransmit(Retransmit[i])
+	          `ifdef ASSERT_EN
+	           ,.bitchk_en(bitchk_en[i]),.SLAVE_ACK(SLAVE_ACK[i])
+	            `endif);
   end
 	endgenerate
 	 
