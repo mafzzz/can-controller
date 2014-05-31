@@ -1,3 +1,5 @@
+`include "def.pkg"
+
 module bitstuff_gen(
 input logic clock,bitgen_en,data,
 output  logic bit_stuff
@@ -10,30 +12,28 @@ if(bitgen_en)
 begin
 		if(data)
 			begin
-				if(count1==4)
+				if(count1==STUFF_COUNT)
 					begin
 						bit_stuff<=1'b1;
 						count1<=0;
 					end
 				else 
 					begin
-					  bit_stuff<=0;
 						count1<=count1+1'b1;
-						count0<=0;
+						{bit_stuff,count0}<=0;
 					end
 			end
 		else
 			begin
-				if(count0==4)
+				if(count0==STUFF_COUNT)
 					begin
 						bit_stuff<=1'b1;
 						count0<=0;
 					end
 				else
 					begin
-					  bit_stuff<=0;
 						count0<=count0+1'b1;
-						count1<=0;
+						{bit_stuff,count1}<=0;
 					end
 		end
 
@@ -42,6 +42,8 @@ else
 	{count1,count0,bit_stuff}<=0;
 end
 endmodule
+
+`include "def.pkg"
 
 module bitstuff_chk(
 input logic clock,bitchk_en,data,
@@ -55,21 +57,20 @@ if(bitchk_en)
 begin
 		if(data)
 			begin
-				if(count1==5)
+				if(count1==STUFF_COUNT+1)
 					begin
 						Stuff_error<=1'b1;
 						count1<=0;
 					end
 				else 
 					begin
-					  Stuff_error<=1'b0;
 						count1<=count1+1'b1;
-						count0<=0;
+						{Stuff_error,count0}<=0;
 					end
 			end
 		else
 			begin
-				if(count0==5)
+				if(count0==STUFF_COUNT+1)
 					begin
 						Stuff_error<=1'b1;
 						count0<=0;
@@ -78,7 +79,7 @@ begin
 					begin
 					  Stuff_error<=1'b0;
 						count0<=count0+1'b1;
-						count1<=0;
+						{Stuff_error,count1}<=0;
 					end
 			end
 

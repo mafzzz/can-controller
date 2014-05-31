@@ -1,54 +1,80 @@
 `include "def.pkg"
 
-interface can_bus(input [Total_Nodes-1:0] input_data);
-wire data = (1'b1 & (&input_data));
-endinterface
-
 
 module top();
 	bit clock;
 	bit reset;
-	logic [Total_Nodes-1:0] data_in_req;
-	logic [Total_Nodes-1:0] data_out_req;
-	logic [Total_Nodes-1:0] data;
+	
+	logic [Total_Nodes-1:0] data_in_req,data_out_req,data,SLAVE_ACK,Retransmit,bitchk_en;
 	bit [DATA_SIZE-1:0] In_packet[0:Total_Nodes-1],Rx_packet[0:Total_Nodes-1];
 	bit [ID_SIZE-1:0] Tx_ID[0:Total_Nodes-1], Rx_ID[0:Total_Nodes-1];
-	bit [ID_SIZE-1:0] ID[0:1]='{11'h001,11'h7FF};
-	longint	input_data[]='{64'hFFFFEEEE0000FEF1,64'hAAAABBBBCCCC0020};
+	
+	 bit [ID_SIZE-1:0] ID[0:Total_Nodes-1]='{11'h001,11'h7FF,11'h111,11'h10A};
+	longint	input_data[]='{64'hFFFFEEEE0000FEF1,64'hAAAABBBBCCCC0021};
 	longint	output_data[$];
 	state_t state;
 	int	count[int]='{default:0};
+	bit preserve_id=0;
+	
+	wire ACK=|SLAVE_ACK;
+	wire BIT_CHK=|bitchk_en;
+	
+	clock_gen cg1(.clock);
 	
 	can_bus bus (data);
 	
-	can		c0(.*,.In_packet(In_packet[0]),.Rx_packet(Rx_packet[0]),.Tx_ID(ID[0]),.Rx_ID(ID[1]),
-	                             .data_in_req(data_in_req[0]),.data_out_req(data_out_req[0]),.data(data[0]));
-	can		c1(.*,.In_packet(In_packet[1]),.Rx_packet(Rx_packet[1]),.Tx_ID(ID[1]),.Rx_ID(ID[0]),
-	                             .data_in_req(data_in_req[1]),.data_out_req(data_out_req[1]),.data(data[1]));
-	
-	initial
+	can		c0(.*,.In_packet(In_packet[0]),.Rx_packet(Rx_packet[0]),.Tx_ID(Tx_ID[0]),.Rx_ID(Rx_ID[0]),.bitchk_en(bitchk_en[0]),
+	                  .data_in_req(data_in_req[0]),.data_out_req(data_out_req[0]),.data(data[0]),
+	                   .Retransmit(Retransmit[0]),.SLAVE_ACK(SLAVE_ACK[0]));
+	                   
+	genvar i;
+	generate
+	for(i=1;i<=Total_Nodes-1;i++)
 	begin
-	clock=1'b0;
-	forever #10 clock=~clock;
-	end
+	can		c (.*,.In_packet(In_packet[i]),.Rx_packet(Rx_packet[i]),.Tx_ID(Tx_ID[i]),.Rx_ID(Rx_ID[i]),.bitchk_en(bitchk_en[i]),
+	         .data_in_req(data_in_req[i]),.data_out_req(data_out_req[i]),.data(data[i]),.Retransmit(Retransmit[i]),.SLAVE_ACK(SLAVE_ACK[i]));
+  end
+	endgenerate
+	 
+	
+	 
+	
+	
 	
 	
 	always@(negedge clock)
 	begin
 	for(int i=0;i<=(Total_Nodes-1);i++)
 		begin
-			if(data_in_req[i])	 In_packet[i]=input_data[i%2];
+			if(data_in_req[i])	
+			begin
+				 In_packet[i]<=input_data[i%2];
+				 Tx_ID[i]<=ID[i];
+				 if(preserve_id)
+				 begin
+					 Rx_ID[i]<=Rx_ID[i];
+					 preserve_id<=0;
+				 end
+				 else  Rx_ID[i]<=(i%2)?ID[i-1]:ID[i+1];
+			end
 			else if(data_out_req[i])	output_data.push_front(Rx_packet[i]);
+			else if(Retransmit[i])   
+			begin
+				Tx_ID[i]=0;
+				if(i%2) Rx_ID[i-1]=0;
+				  else  Rx_ID[i+1]=0;
+				preserve_id<=1;
+			end
 		end
 	end
 	
 	always_comb
-	count[c1.state]=count[c1.state]+1;
+	count[c0.state]=count[c0.state]+1;
 	
 	initial
 	begin
 	reset=1'b1;
-	#20 reset=~reset;
+	repeat(2)  @(negedge clock); reset=~reset;
 	end
 	
 	final
@@ -60,4 +86,11 @@ module top();
 	$display("%p",count);
 	end
 endmodule
+
+`include "def.pkg"
+
+module clock_gen(output bit clock);
+  initial
+	forever #CLOCK_WIDTH clock=~clock;
+	endmodule
 	

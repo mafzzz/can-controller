@@ -2,13 +2,7 @@
 //DUT Verilog
 
 `include "def.pkg"
-  `define ERROR_INJECT
-  `define DATA_PACKET	Tx_packet[0]
-  `define DOM	1'b0
-  `define REC	1'b1
-  `define ERROR_BIT	Tx_packet[5]
-  `define RTR_BIT	CRC_array[12]
-
+ 
 module can    
   ( input [DATA_SIZE-1:0] In_packet,
 	input clock,
@@ -18,7 +12,12 @@ module can
 	output logic data_in_req,
 	output logic data_out_req,
 	output logic [DATA_SIZE-1:0] Rx_packet,
-	output logic data
+	output logic data,
+	output logic Retransmit,
+	`ifdef ASSERT_EN
+	output logic SLAVE_ACK,
+	output logic bitchk_en
+	`endif
   );
   
 
@@ -38,8 +37,12 @@ module can
   
   
   int i,Serial_count,crc_count,count;
-  bit BIT_ERROR,ARB_LOSS,ACK_ERROR,CRC_CHK,SLAVE_EOF,SLAVE_ACK,Retransmit,bit_stuff,Stuff_error;
-  bit bitgen_en,bitchk_en;
+  bit BIT_ERROR,ARB_LOSS,ACK_ERROR,CRC_CHK,SLAVE_EOF,bit_stuff,Stuff_error;
+  bit bitgen_en;
+  
+  `ifndef ASSERT_EN
+	logic SLAVE_ACK,logic bitchk_en;
+	`endif
 
  
  bitstuff_gen	bit_gen1(clock,bitgen_en,bus.data,bit_stuff);
@@ -84,7 +87,7 @@ module can
 							if(`DATA_PACKET)
 							begin
 								CRC_array={packet.Data.Data,packet.Data.DLC,packet.Data.R0,packet.Data.IDE,packet.Data.RTR,packet.Data.ID,packet.Data.SOF};
-								CRC_gen(.CRC_array(CRC_array),.CRC_Len(CRC_Len),.CRC_RG(packet.Data.CRC));
+								bus.CRC_gen(.CRC_array(CRC_array),.CRC_Len(CRC_Len),.CRC_RG(packet.Data.CRC));
 								`ifdef ERROR_INJECT
 								//if(`ERROR_FLAG)
 								packet.Data.CRC<={<<{packet.Data.CRC}};
@@ -93,7 +96,7 @@ module can
 							else
 							begin
 								CRC_array={packet.Req.DLC,packet.Req.R0,packet.Req.IDE,packet.Req.RTR,packet.Req.ID,packet.Req.SOF};
-								CRC_gen(.CRC_array(CRC_array),.CRC_Len(CRC_Len),.CRC_RG(packet.Req.CRC));
+								bus.CRC_gen(.CRC_array(CRC_array),.CRC_Len(CRC_Len),.CRC_RG(packet.Req.CRC));
 								`ifdef ERROR_INJECT
 								//if(`ERROR_FLAG)
 								packet.Req.CRC<={<<{packet.Req.CRC}};
@@ -177,7 +180,7 @@ module can
 							else if(i==(CRC_Len+1'b1))
 							begin
 								CRC_CHK<=1'b1;
-								CRC_gen(.CRC_array(CRC_array),.CRC_Len(CRC_Len),.CRC_RG(CRC_chk));
+								bus.CRC_gen(.CRC_array(CRC_array),.CRC_Len(CRC_Len),.CRC_RG(CRC_chk));
 								crc_count<=0;
 							end
 							else if(SLAVE_ACK)
@@ -185,9 +188,9 @@ module can
 								data<=`DOM;
 								{bitgen_en,bitchk_en}<=0;
 								SLAVE_EOF<=1'b1;
-								SLAVE_ACK<=0;
 								count<=0;
 							end
+							else if(SLAVE_EOF && count==1)data<=`REC;
 						end
 					
 	
@@ -198,7 +201,7 @@ module can
 							Serial_count=FLAG_SIZE+DELIM_SIZE-1;
 							{Serial_stream,i}=0;
 							data<=`DOM;
-							Error_Handle(error,Tx_Ecount,Error_packet);
+							bus.Error_Handle(error,Tx_Ecount,Error_packet);
 							Serial_stream=Error_packet;
 							state=ERROR_TRANSMIT;
 							if(Tx_Ecount>=ACTIVE_THRESHOLD)	error=PASSIVE;
@@ -210,7 +213,7 @@ module can
 							Serial_count=FLAG_SIZE+DELIM_SIZE-1;
 							{Serial_stream,i}=0;
 							data<=`DOM;
-							Error_Handle(error,Rx_Ecount,Error_packet);
+							bus.Error_Handle(error,Rx_Ecount,Error_packet);
 							Serial_stream=Error_packet;
 							state=ERROR_TRANSMIT;
 							if(Rx_Ecount>=ACTIVE_THRESHOLD)	error=PASSIVE;
@@ -300,7 +303,6 @@ SLAVE:			begin
 								begin 
 									CRC_CHK<=0; 
 									SLAVE_ACK<=1'b1; 
-									data<=`DOM;
 								end
 								else	state<=Rx_ERROR; 		//CRC DELIM ERROR
 							end	
@@ -308,7 +310,8 @@ SLAVE:			begin
 						
 					else if(SLAVE_EOF)
 					begin
-						data<=`REC;
+						
+						SLAVE_ACK<=0;
 						count<=count+1'b1;
 						if(count >=1 && !bus.data) state<=Rx_ERROR;
 						if(count==(EOF_SIZE+BUS_IDLE_COUNT) && bus.data)
@@ -330,41 +333,17 @@ SLAVE:			begin
 endcase
 end
 
- task automatic Data_Frame_Pack(ref Can_packet packet);
+task automatic Data_Frame_Pack(ref Can_packet packet);
 	{packet.Data.SOF,packet.Data.RTR,packet.Data.IDE,packet.Data.R0,packet.Data.CRC}<='0;
 	{packet.Data.CRC_Delim,packet.Data.ACK,packet.Data.ACK_Delim,packet.Data.EOF}<='1;
 	packet.Data.ID<={<<{Tx_ID}};packet.Data.Data<={<<{Tx_packet}};packet.Data.DLC<={<<{DLC}};
-
- endtask
+endtask
  
- task automatic Req_Frame_Pack(ref Can_packet packet);
+task automatic Req_Frame_Pack(ref Can_packet packet);
 	{packet.Req.SOF,packet.Req.IDE,packet.Req.R0,packet.Req.CRC}<='0;
 	{packet.Req.CRC_Delim,packet.Req.ACK,packet.Req.ACK_Delim,packet.Req.EOF,packet.Req.RTR}<='1;
 	packet.Req.DLC<={<<{DLC}};packet.Req.ID<={<<{Rx_ID}};
-endtask
- 
- function automatic void Error_Handle(const ref errorstate_t ERROR,ref int error_count,ref Error_Frame Error_packet);
-error_count=error_count+8;
-Error_packet.Delim='1;
-if(ERROR==ACTIVE) Error_packet.Flag='0;
-if(ERROR==PASSIVE)	 Error_packet.Flag='1;
-endfunction
-
- 
- function automatic void CRC_gen(const ref logic [DATA_CRC_LEN:0] CRC_array,ref int CRC_Len,output logic [CRC_SIZE-1:0] CRC_RG);
-  automatic logic CRCNXT=0;
-  parameter N_CRC=15;
-  CRC_Len=`RTR_BIT?REQ_CRC_LEN:DATA_CRC_LEN;
-  for(int i=0;i<=CRC_Len;i++)
-  begin
-  CRCNXT=CRC_array[i] ^ CRC_RG[N_CRC-1];
-  CRC_RG<<=1;
-  if(CRCNXT)
-  CRC_RG=CRC_RG ^ CRC_Poly;
-  end
-  CRC_RG={<<{CRC_RG}};
-  endfunction
-				
+endtask	
 					
 endmodule
 
