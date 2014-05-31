@@ -3,6 +3,7 @@
 
 `include "def.pkg"
  
+ 
 module can    
   ( input [DATA_SIZE-1:0] In_packet,
 	input clock,
@@ -73,7 +74,7 @@ module can
 		READ_PACKET:  	begin 
 							if(!In_packet)	state<=BUS_RST;
 							else if(data_in_req) Tx_packet<=In_packet;
-							{data_in_req,Retransmit}<='0;
+							data_in_req<='0;
 							state<=FORMAT_PACKET;
 						end
 	                       				
@@ -89,20 +90,21 @@ module can
 								CRC_array={packet.Data.Data,packet.Data.DLC,packet.Data.R0,packet.Data.IDE,packet.Data.RTR,packet.Data.ID,packet.Data.SOF};
 								bus.CRC_gen(.CRC_array(CRC_array),.CRC_Len(CRC_Len),.CRC_RG(packet.Data.CRC));
 								`ifdef ERROR_INJECT
-								//if(`ERROR_FLAG)
-								packet.Data.CRC<={<<{packet.Data.CRC}};
+								if(`ERROR_FLAG)
+								packet.Data.CRC=Retransmit?packet.Data.CRC:{<<{packet.Data.CRC}};
 								`endif
 							end
 							else
 							begin
 								CRC_array={packet.Req.DLC,packet.Req.R0,packet.Req.IDE,packet.Req.RTR,packet.Req.ID,packet.Req.SOF};
 								bus.CRC_gen(.CRC_array(CRC_array),.CRC_Len(CRC_Len),.CRC_RG(packet.Req.CRC));
-								`ifdef ERROR_INJECT
+								//`ifdef ERROR_INJECT
 								//if(`ERROR_FLAG)
-								packet.Req.CRC<={<<{packet.Req.CRC}};
-								`endif
+								//packet.Req.CRC=Retransmit?packet.Req.CRC:{<<{packet.Req.CRC}};
+								//`endif
 							end
 							state<=BIT_SERIALIZE;
+							Retransmit<=0;
 						end
 
 		BIT_SERIALIZE:	begin

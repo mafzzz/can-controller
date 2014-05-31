@@ -1,5 +1,6 @@
 `include "def.pkg"
 
+
 interface can_bus(input [Total_Nodes-1:0] input_data);
 
 wire data = (1'b1 & (&input_data));
