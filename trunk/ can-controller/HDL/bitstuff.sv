@@ -1,5 +1,6 @@
 `include "def.pkg"
 
+
 module bitstuff_gen(
 input logic clock,bitgen_en,data,
 output  logic bit_stuff
