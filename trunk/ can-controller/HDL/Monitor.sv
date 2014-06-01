@@ -52,7 +52,7 @@ property Overload_check;
 ( $rose(ACK) |-> ##9 bus.data[*3])	;					
 endproperty
 
-
+ 
 
 // Assert properties
 	
