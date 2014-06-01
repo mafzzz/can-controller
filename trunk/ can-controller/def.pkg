@@ -1,7 +1,6 @@
 `ifndef DEFS_DONE
 	`define DEFS_DONE
 package definitions;
-//parameter data_width = 64;
 parameter Total_Nodes = 4;
 parameter	DLC_SIZE=4;
 parameter CLOCK_CYCLE=20;
@@ -79,14 +78,16 @@ parameter	ERROR_STEP=8;
 parameter	ACTIVE_THRESHOLD=127;
 parameter	PASSIVE_THRESHOLD=256;
 
+//`define VELOCE
 `define RTR_BIT	CRC_array[12]
-//`define ERROR_INJECT
+`define ERROR_INJECT
 `define DATA_PACKET	Tx_packet[0]
 `define DOM	1'b0
 `define REC	1'b1
-`define ERROR_BIT	Tx_packet[5]
+`define ERROR_FLAG	Tx_packet[5]
 `define RTR_BIT	CRC_array[12]
 `define ASSERT_EN
+`define DEBUG
 endpackage
 
 import definitions::*;

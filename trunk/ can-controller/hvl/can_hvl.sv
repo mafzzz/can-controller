@@ -2,8 +2,10 @@
 
 import xtlm_pkg::*; // For trans-language TLM channels.
 //`include "def.pkg"
-parameter DATA_SIZE=64;
-parameter Total_Nodes=10;
+import definitions::*;
+`define DATA_PACKET	Tx_packet[0]
+`define ERROR_FLAG	Tx_packet[5]
+`define DEBUG
 //File Handlers
 integer Rx_file;
 integer Tx_file;
@@ -12,7 +14,6 @@ integer ID_file;
 longint unsigned Tx_queue[$];
 longint unsigned Rx_queue[$];
 
-parameter debug=0;
 
 	class scoreboard;
 
@@ -31,10 +32,10 @@ parameter debug=0;
 			while (1)
 			begin
 				monitorChannel.get(Rx_packet);
-				Rx_queue.push_front(Rx_packet);
 				$fwrite(Rx_file,"%0d\n",Rx_packet);
-				if(debug)
-				$display("Rx_packet=%d",Rx_packet);
+				`ifdef DEBUG
+				Rx_queue.push_front(Rx_packet);
+				`endif
 			end
 		endtask
     
@@ -51,7 +52,6 @@ parameter debug=0;
 				ID_driverChannel = new ("top.inputpipe_id");		
 				ID_file=$fopen("ID_gen.txt","w");
 				$fwrite(ID_file,"ID_Generated\n");
-				
 			end
 		endfunction
 
@@ -61,9 +61,8 @@ parameter debug=0;
 		repeat(runs)				
 			begin			
 				
-				//Tx_packet=+1;
+				
 				if(randomize(ID) with {ID>0;ID<((2**(Total_Nodes*16))-1);})	
-				if(debug) $display("m=%d",ID);
 				ID_driverChannel.put(ID);
 				$fwrite(ID_file,"%0d\n",ID);
 			end
@@ -74,11 +73,20 @@ parameter debug=0;
 
 	endclass
 	
-
+	class Data_Randomize;
+	rand bit[DATA_SIZE-1:0] Tx_packet;
+	int DataFrame_wt=90,ReqFrame_wt=10,ErrorOn_wt=20,ErrorOff_wt=80; 
+	constraint Data_frame {
+	`DATA_PACKET dist {1:=DataFrame_wt,0:=ReqFrame_wt};
+	`ERROR_FLAG dist {1:=ErrorOn_wt,0:=ErrorOff_wt};
+	}
+	
+	endclass
+	
 	class packet_gen ;
 
 		xtlm_fifo #(bit[(DATA_SIZE)-1:0]) Data_driverChannel;
-		bit [DATA_SIZE-1:0] Tx_packet=0;
+		Data_Randomize RandTx_Data;
 		
     
 		function new();			//Constructor 
@@ -86,6 +94,7 @@ parameter debug=0;
 				Data_driverChannel = new ("top.inputpipe_data");		
 				Tx_file=$fopen("Tx_packet.txt","w");
 				$fwrite(Tx_file,"Tx_Packets\n");
+				RandTx_Data=new();
 				
 			end
 		endfunction
@@ -96,12 +105,15 @@ parameter debug=0;
 		repeat(runs)				
 			begin			
 				
-				//Tx_packet=+1;
-				if(randomize(Tx_packet) with {Tx_packet>0;Tx_packet<((2**63)-1);})	
-				if(debug) $display("m=%d",Tx_packet);
-				Tx_queue.push_front(Tx_packet);
-				Data_driverChannel.put(Tx_packet);
-				$fwrite(Tx_file,"%0d\n",Tx_packet);
+				
+				RandTx_Data.constraint_mode(0);
+				RandTx_Data.Data_frame.constraint_mode(1);
+				assert(RandTx_Data.randomize());
+				Data_driverChannel.put(RandTx_Data.Tx_packet);
+				$fwrite(Tx_file,"%0d\n",RandTx_Data.Tx_packet);
+				`ifdef DEBUG
+				Tx_queue.push_front(RandTx_Data.Tx_packet);
+				`endif
 			end
 		       	
        	Data_driverChannel.flush_pipe;		
@@ -180,7 +192,9 @@ parameter debug=0;
 	$display("-----------------PACKET COUNTS-----------------");
 	$display("No.of Packets Revieved:			%d",Rx_queue.size());
 	$display("No.Of Lost Packets:		       		 %d",Lost_PacketCount);
-	//$display("HVL:%p",Rx_queue);
+	`ifdef DEBUG
+	$display("HVL:%p",Rx_queue.size());
+	`endif
 	end
 	endmodule
  
