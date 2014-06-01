@@ -1,7 +1,7 @@
 `ifndef DEFS_DONE
 	`define DEFS_DONE
 package definitions;
-parameter Total_Nodes = 4;
+parameter Total_Nodes = 10;
 parameter	DLC_SIZE=4;
 parameter CLOCK_CYCLE=20;
 parameter DUTY_CYCLE=2;

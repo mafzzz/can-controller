@@ -14,9 +14,9 @@ module can
 	output logic data_out_req,
 	output logic [DATA_SIZE-1:0] Rx_packet,
 	output logic data,
-	output logic Retransmit,
+	output logic Retransmit
 	`ifdef ASSERT_EN
-	output logic SLAVE_ACK,
+	,output logic SLAVE_ACK,
 	output logic bitchk_en
 	`endif
   );
@@ -42,12 +42,12 @@ module can
   bit bitgen_en;
   
   `ifndef ASSERT_EN
-	logic SLAVE_ACK,logic bitchk_en;
+	logic SLAVE_ACK, bitchk_en;
 	`endif
 
  
- bitstuff_gen	bit_gen1(clock,bitgen_en,bus.data,bit_stuff);
- bitstuff_chk	bit_chk1(clock,bitchk_en,bus.data,Stuff_error);
+ bitstuff #(.Thresh_Count(STUFF_COUNT)) bitstuff_gen  (clock,bitgen_en,bus.data,bit_stuff);
+ bitstuff #(.Thresh_Count(STUFF_COUNT+1)) bitstuff_chk  (clock,bitchk_en,bus.data,Stuff_error);
  
 
 			
@@ -98,10 +98,6 @@ module can
 							begin
 								CRC_array={packet.Req.DLC,packet.Req.R0,packet.Req.IDE,packet.Req.RTR,packet.Req.ID,packet.Req.SOF};
 								bus.CRC_gen(.CRC_array(CRC_array),.CRC_Len(CRC_Len),.CRC_RG(packet.Req.CRC));
-								//`ifdef ERROR_INJECT
-								//if(`ERROR_FLAG)
-								//packet.Req.CRC=Retransmit?packet.Req.CRC:{<<{packet.Req.CRC}};
-								//`endif
 							end
 							state<=BIT_SERIALIZE;
 							Retransmit<=0;
@@ -115,7 +111,7 @@ module can
 						end
 
 		BUS_IDLE_CHECK:	begin
-							if(bus.data)
+							assert(bus.data)
 							begin
 								if(count==BUS_IDLE_COUNT)
 								begin
