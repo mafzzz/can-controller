@@ -65,60 +65,44 @@ endproperty
 // Assert properties
 	
 assert property(Overload_check)
-//$strobe( $time, " Overload_check Passed");
 Overload_check_Passcount++;
 else
-//$error(" Overload  error");
 Overload_check_Failcount++;	
 	
 assert property(CRC_delimiter_check)
-//$strobe( $time, " CRC delimiter check Passed");
 CRC_delimiter_Passcount++;
 else
-//$error(" CRC Delimiter Error");
 CRC_delimiter_Failcount++;
 				
 assert property(bit_stuffing_check_high)
-//$strobe( $time, " bit_stuffing_check_high Passed");
 bit_check_Passcount++;
 else
-//$error(" Bit Stuffing_high error");
 bit_check_Failcount++;
 
 assert property(bit_stuffing_check_low)
-//$strobe( $time, " bit_stuffing_check_low Passed");
 bit_check_Passcount++;
 else
-//$error(" Bit Stuffing_low error");
 bit_check_Failcount++;
 
 assert property(bus_idle_check)
-//$strobe( $time, " bus_idle_check Passed");
 idle_check_Passcount++;
 else
-//$error(" Bus not IDLE after Reset");
 idle_check_Failcount++;
 		
 assert property(EOF_check)
-//$strobe( $time, " EOF check Passed");
 EOF_check_Passcount++;
 else
-//$error(" End of Frame error");	
 EOF_check_Failcount++;	
 
 assert property(ACK_check)
-//$strobe( $time, " ACK_check Passed");
 ACK_check_Passcount++;
 else
-//$error(" ACK_check Error");
 ACK_check_Failcount++;
 
 assert property(ACK_delimiter_check)
-//$strobe( $time, " ACK_delimiter_check Passed");
 
 ACK_delimiter_Passcount++;
 else
-//$error(" ACK Delimiter Error");
 ACK_delimiter_Failcount++;
 
 
@@ -126,17 +110,18 @@ ACK_delimiter_Failcount++;
 
 final
 begin
-
-$display("*****************************************************************************");
-$display(  "TYPE OF CHECK				TOTAL COUNT 		PASS COUNT    FAIL COUNT ");
-$display( "---------------------------------------------------------------------------");
-$display( " Bus IDLE Check					%0d					%0d           %0d      ", (idle_check_Passcount+idle_check_Failcount),idle_check_Passcount,idle_check_Failcount);
-$display( " Bit Stuffing Check 				%0d					%0d           %0d      ", (bit_check_Passcount+bit_check_Failcount),bit_check_Passcount,bit_check_Failcount);
-$display( " CRC Delimiter check				%0d					%0d           %0d      ", (CRC_delimiter_Passcount+CRC_delimiter_Failcount),CRC_delimiter_Passcount,CRC_delimiter_Failcount);
-$display( " ACK Check						%0d					%0d           %0d      ", (ACK_check_Passcount+ACK_check_Failcount),ACK_check_Passcount,ACK_check_Failcount);
-$display( " ACK Delimiter Check				%0d					%0d           %0d      ", (ACK_delimiter_Passcount+ACK_delimiter_Failcount),ACK_delimiter_Passcount,ACK_delimiter_Failcount);
-$display( " EOF Check						%0d					%0d           %0d      ", (EOF_check_Passcount+EOF_check_Failcount),EOF_check_Passcount,EOF_check_Failcount);
-$display( " Overload Check					%0d					%0d           %0d      ", (Overload_check_Passcount+Overload_check_Failcount),Overload_check_Passcount,Overload_check_Failcount);
-$display("*****************************************************************************");
-
+$display( "------------------------------------------------------------------------------------------------------");
+$display( "----------------------------------------ASSERTION SCOREBOARD------------------------------------------");
+$display("******************************************************************************************************");
+$display(  "TYPE OF CHECK\t\t\t\tTOTAL COUNT\t\tPASS COUNT\t\tFAIL COUNT ");
+$display( "------------------------------------------------------------------------------------------------------");
+$display( " Bus IDLE Check\t\t%d\t\t%d\t\t%d      ", (idle_check_Passcount+idle_check_Failcount),idle_check_Passcount,idle_check_Failcount);
+$display( " Bit Stuffing Check\t\t%d\t\t%d\t\t%d      ", (bit_check_Passcount+bit_check_Failcount),bit_check_Passcount,bit_check_Failcount);
+$display( " CRC Delimiter check\t\t%d\t\t%d\t\t%d      ", (CRC_delimiter_Passcount+CRC_delimiter_Failcount),CRC_delimiter_Passcount,CRC_delimiter_Failcount);
+$display( " ACK Check\t\t\t%d\t\t%d\t\t%d      ", (ACK_check_Passcount+ACK_check_Failcount),ACK_check_Passcount,ACK_check_Failcount);
+$display( " ACK Delimiter Check\t\t%d\t\t%d\t\t%d      ", (ACK_delimiter_Passcount+ACK_delimiter_Failcount),ACK_delimiter_Passcount,ACK_delimiter_Failcount);
+$display( " EOF Check\t\t\t%d\t\t%d\t\t%d      ", (EOF_check_Passcount+EOF_check_Failcount),EOF_check_Passcount,EOF_check_Failcount);
+$display( " Overload Check\t\t%d\t\t%d\t\t%d      ", (Overload_check_Passcount+Overload_check_Failcount),Overload_check_Passcount,Overload_check_Failcount);
+$display("*******************************************************************************************************");
+end
 endmodule

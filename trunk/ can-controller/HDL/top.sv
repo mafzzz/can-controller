@@ -25,8 +25,10 @@
 	logic [Total_Nodes-1:0] SLAVE_ACK,bitchk_en;
 	wire ACK=|SLAVE_ACK;
 	wire BIT_CHK=|bitchk_en;
-	`endif
 	
+	
+	Monitor m1(.*);
+	`endif
 	
 	clock_gen cg1(.clock);
 	
@@ -76,12 +78,12 @@
 			if(!tq.size()) Lost_PacketCount+=1;
 			end
 		end
-		$display("-----------------------------------------------");
-		$display("------------BUS TRANSACTION SCOREBOARD---------");
+$display( "-------------------------------------------------------------------------------------------------------");
+$display( "------------------------------------BUS TRANSACTION SCOREBOARD-----------------------------------------");
 		$display("No. of Transactions:				%d",count[ARBITRATE]);
 		$display("No. of Transactions Re-attempted:		%d",count[ERROR_TRANSMIT]);
 		$display("No. of Transactions Successful:		%d",(count[ARBITRATE]-count[ERROR_TRANSMIT]));
-		$display("Success Percent:				%d",100*(count[ARBITRATE]-count[ERROR_TRANSMIT])/count[ARBITRATE]);
+		$display("Percent Successful:				%d%%",100*(count[ARBITRATE]-count[ERROR_TRANSMIT])/count[ARBITRATE]);
 		`ifdef DEBUG
 		$display("HDL Output Queue:%p",Output_queue.size()); 
 		`endif

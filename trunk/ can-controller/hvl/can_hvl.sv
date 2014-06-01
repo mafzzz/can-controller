@@ -183,17 +183,17 @@ longint unsigned Rx_queue[$];
 			if(!tq.size()) Lost_PacketCount+=1;
 			end
 		end
-	$display("-----------------------------------------------");
-	$display("-------------STIMULUS SCOREBOARD---------------");
+	$display( "-------------------------------------------------------------------------------------------------------");
+	$display( "----------------------------------------STIMULUS SCOREBOARD--------------------------------------------");
 	$display("No.Of Packets generated:			%d",Packet_count);
 	$display("No.Of Data Packets:				 %d",Data_PacketCount);
 	$display("No.Of Req Packets:				 %d",Req_PacketCount);
-	$display("-----------------------------------------------");
-	$display("-----------------PACKET COUNTS-----------------");
+	$display( "-------------------------------------------------------------------------------------------------------");
+	$display( "----------------------------------------PACKET COUNTS--------------------------------------------------");
 	$display("No.of Packets Revieved:			%d",Rx_queue.size());
 	$display("No.Of Lost Packets:		       		 %d",Lost_PacketCount);
 	`ifdef DEBUG
-	$display("HVL:%p",Rx_queue.size());
+	$display("HVL Output Queue:%p",Rx_queue.size());
 	`endif
 	end
 	endmodule
