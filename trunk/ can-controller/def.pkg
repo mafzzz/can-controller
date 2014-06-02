@@ -1,13 +1,16 @@
 `ifndef DEFS_DONE
 	`define DEFS_DONE
 package definitions;
-parameter Total_Nodes = 10;
-parameter	DLC_SIZE=4;
+//CAN Bus parameters
+
+parameter Total_Nodes = 4;		//No. of CAN Codes specified at compile time		
 parameter CLOCK_CYCLE=20;
 parameter DUTY_CYCLE=2;
 
 localparam  CLOCK_WIDTH=CLOCK_CYCLE/DUTY_CYCLE;
 
+//Field Sizes
+parameter	DLC_SIZE=4;	
 parameter bit [DLC_SIZE-1:0] DLC=8;
 localparam	DATA_SIZE=(DLC*8);
 
@@ -20,6 +23,7 @@ parameter	FLAG_SIZE=6;
 parameter	DATA_START=19;
 const bit [CRC_SIZE:0] CRC_Poly=16'hC599;
 
+//Struct typedef for Data & req Frames
 typedef struct packed{
 logic [EOF_SIZE-1:0] EOF;
 logic ACK_Delim;
@@ -49,20 +53,23 @@ logic [ID_SIZE-1:0] ID;
 logic SOF;
 }Req_Frame;
 
+//Union of Data & Req structs
 typedef union{
 Data_Frame Data;
 Req_Frame Req;
 }Can_packet;
 
-
+//Error Frame
 typedef struct packed{
 logic [DELIM_SIZE-1:0] Delim;
 logic [FLAG_SIZE-1:0] Flag;
 }Error_Frame;
 
+//Enum state variables
 typedef enum{BUS_RST,READ_PACKET,FORMAT_PACKET,CRC_GEN,BIT_SERIALIZE,BUS_IDLE_CHECK,ARBITRATE,MASTER,IFS,SLAVE,Tx_ERROR,Rx_ERROR,ERROR_TRANSMIT,BUS_OFF} state_t;
 typedef enum{ACTIVE,PASSIVE} errorstate_t;
 
+//Localparams for CRC and ACK slots
 localparam REQ_ACK_SLOT=36;
 localparam	REQ_FRAME_SIZE=43;
 localparam	REQ_CRC_LEN=18;
@@ -70,6 +77,7 @@ localparam DATA_ACK_SLOT=(DATA_SIZE+REQ_ACK_SLOT);
 localparam	DATA_FRAME_SIZE=(DATA_SIZE+REQ_FRAME_SIZE);
 localparam	DATA_CRC_LEN=(DATA_SIZE+REQ_CRC_LEN);
 
+//Bus configurations
 parameter	BUS_IDLE_COUNT=4;
 parameter STUFF_COUNT=4;
 parameter	ARB_LENGTH=12;
@@ -78,16 +86,21 @@ parameter	ERROR_STEP=8;
 parameter	ACTIVE_THRESHOLD=127;
 parameter	PASSIVE_THRESHOLD=256;
 
-//`define VELOCE
-`define RTR_BIT	CRC_array[12]
-`define ERROR_INJECT
+//Flags for operation modes
+
+`define VELOCE						//Removes non-synthesizable constructs for veloce mode
+`define ASSERT_EN					//Assertion mode
+`define DEBUG						//Debug  mode
+`define ERROR_INJECT				//Error mode
+
+//Internal Macros for readability
+`define RTR_BIT	CRC_array[12]		
 `define DATA_PACKET	Tx_packet[0]
-`define DOM	1'b0
-`define REC	1'b1
+`define DOM	1'b0					
+`define REC	1'b1	
 `define ERROR_FLAG	Tx_packet[5]
-`define RTR_BIT	CRC_array[12]
-`define ASSERT_EN
-`define DEBUG
+`define RTR_BIT	CRC_array[12]	
+
 endpackage
 
 import definitions::*;

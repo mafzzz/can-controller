@@ -1,0 +1,39 @@
+-------------------------------------------------------
+--------------------FILES INCLUDED---------------------
+hdl			-	Contains DUT modules & XRTL transactor
+hvl			-	HVL side running on Questa workstation
+def.pkg		-	Definitions package
+Makefile	-	To compile,build & launch emulation
+tbx.config	-	Configuration settings about design partition and target emulator
+Sample_transcript	-	Transcripts for one of our emulation runs
+Veloce				-	Statistics of our veloce run
+
+-------------------------------------------------------
+--------------------DIRECTIONS-------------------------
+To compile for PureSim mode:
+
+make puresim 
+
+To compile for Veloce mode:
+
+make veloce 
+
+To launch the simulation :
+
+vsim -novopt top can_hvl TbxSvManager +PACKETS=<NumberofPackets>
+
+NumberofPackets = Number of packets to be generated
+
+
+e.g.
+vsim -novopt top booth_hvl TbxSvManager +PACKETS=1000
+
+The above command launches simulation and generates 1000 random(yet constrained!) test packets
+
+---------------------------------------------------------
+--------------------NOTE ON VELOCE-----------------------
+- Even though design was synthesized in veloce we faced few problems
+
+- In veloce mode we had errors stating some of the constructs like enums were not supported, so we included the DUT and other HDL files as XRTL modules in tbx.config which removed them (not sure why)
+
+- Also we had some cycle mismatches in veloce mode which result in some packet losses, even though the same test run was successful in TBX puresim.

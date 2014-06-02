@@ -1,0 +1,17 @@
+//This is a stats of our design synthesized in veloce, but we had few
+//unusual packet losses even though the same test run was successful in TBX puresim
+
+
+# =============================================================================
+#                             SIMULATION STATISTICS                            
+# =============================================================================
+# Simulation finished at time 167894820
+# 
+# Total number of TBX clocks:                                      26260598
+# Total number of TBX clocks spent in HDL time advancement:        16789482
+# Total number of TBX clocks spent in HDL due to callee execution: 6
+# Percentage TBX clocks spent in HDL time advance:                 63.93 %
+# -----------------------------------------------------------------------------
+# Total CPU time (user mode):                                      13.02 seconds.
+# Total time spent:                                                22.32 seconds.
+# -----------------------------------------------------------------------------
