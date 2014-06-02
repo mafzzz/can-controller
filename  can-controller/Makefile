@@ -2,8 +2,10 @@ all: puresim
 
 VLOG = \
 	hdl/top.sv \
-	hdl/can.sv
-	hdl/bitstuff.sv
+	hdl/can.sv	\
+	hdl/bitstuff.sv	\
+	hdl/can_bus.sv	\
+	hdl/Monitor.sv
 	
 SVLOG = \
 	hvl/can_hvl.sv

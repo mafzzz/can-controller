@@ -1,5 +1,6 @@
 // 
-// Monitor
+// DESCRIPTION: Monitor module runs concurrent assertions for error detection on CAN bus.
+// Disabled in veloce mode
 //
 
 module Monitor( interface bus,
@@ -9,7 +10,7 @@ module Monitor( interface bus,
 				input reset);
 
 
-				
+//Internal Counters for assertion scoreboard				
 int idle_check_Passcount,idle_check_Failcount;
 int bit_check_Passcount,bit_check_Failcount;
 int EOF_check_Passcount,EOF_check_Failcount;
@@ -18,8 +19,8 @@ int ACK_delimiter_Passcount,ACK_delimiter_Failcount;
 int CRC_delimiter_Passcount,CRC_delimiter_Failcount;
 int Overload_check_Passcount,Overload_check_Failcount;				
 
-// Property definition
-
+// Property definitions
+//Assert various CAN Frame properties like Fixed field values,ACK Slot,Delimiters etc.
 property bus_idle_check;
 @(posedge clock) $rose(reset)|=> bus.data;
 endproperty
@@ -52,18 +53,18 @@ endproperty
 
 property CRC_delimiter_check;
 @(posedge clock) disable iff (reset)
-( ACK |-> bus.data)	;				// Read the value on the data bus at the previous clk edge		
+( ACK |-> bus.data)	;				// Read the value on the data bus at the same clk edge		
 endproperty 	
 
 property Overload_check;
 @(posedge clock) disable iff (reset)
-( $rose(ACK) |-> ##9 bus.data[*3])	;					
+( $rose(ACK) |-> ##9 bus.data[*3])	;	//Check if bus goes dominant during IDLE phase				
 endproperty
 
  
 
 // Assert properties
-	
+//Internal counters to track pass and fails
 assert property(Overload_check)
 Overload_check_Passcount++;
 else

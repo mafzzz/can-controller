@@ -1,0 +1,93 @@
+# vsim +PACKETS=100 -c -novopt top can_hvl TbxSvManager 
+# Loading /var/tmp/vijayem2@velocesolo_dpi_10679/linux_gcc-4.5.0/export_tramp.so
+# //  Questa Sim
+# //  Version 10.2a linux Mar 15 2013
+# //
+# //  Copyright 1991-2013 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //
+# Refreshing /u/vijayem2/FinalProj/puresim_work.top
+# Refreshing /u/vijayem2/FinalProj/puresim_work.top_sv_unit
+# Refreshing /u/vijayem2/FinalProj/puresim_work.definitions
+# Loading sv_std.std
+# Loading work.definitions
+# Loading work.top_sv_unit
+# Loading work.top
+# Refreshing /u/vijayem2/FinalProj/puresim_work.Monitor
+# Loading work.Monitor
+# Refreshing /u/vijayem2/FinalProj/puresim_work.clock_gen
+# Loading work.clock_gen
+# Refreshing /u/vijayem2/FinalProj/puresim_work.can_bus
+# Refreshing /u/vijayem2/FinalProj/puresim_work.can_bus_sv_unit
+# Loading work.can_bus_sv_unit
+# Loading work.can_bus
+# Refreshing /u/vijayem2/FinalProj/puresim_work.can
+# Refreshing /u/vijayem2/FinalProj/puresim_work.can_sv_unit
+# Loading work.can_sv_unit
+# Loading work.can
+# Refreshing /u/vijayem2/FinalProj/puresim_work.bitstuff
+# Refreshing /u/vijayem2/FinalProj/puresim_work.bitstuff_sv_unit
+# Loading work.bitstuff_sv_unit
+# Loading work.bitstuff
+# Loading work.GlobalPipeInfo
+# Loading work.scemi_input_pipe
+# Loading work.scemi_output_pipe
+# Refreshing /u/vijayem2/FinalProj/puresim_work.can_hvl
+# Refreshing /u/vijayem2/FinalProj/puresim_work.can_hvl_sv_unit
+# Refreshing /u/vijayem2/FinalProj/puresim_work.xtlm_pkg
+# Refreshing /u/vijayem2/FinalProj/puresim_work.xtlm_base_pkg
+# Refreshing /u/vijayem2/FinalProj/puresim_work.tbx_event_pkg
+# Loading work.tbx_event_pkg
+# Loading work.xtlm_base_pkg
+# Loading work.xtlm_pkg
+# Loading work.can_hvl_sv_unit
+# Loading work.can_hvl
+# Refreshing /u/vijayem2/FinalProj/puresim_work.TbxSvManager
+# Loading work.TbxSvManager
+# Loading /u/vijayem2/FinalProj/puresim_work/_sc/linux_gcc-4.3.3/systemc.so
+# Loading /u/vijayem2/FinalProj/puresim_work.TbxScManager
+# Compiling /var/tmp/vijayem2@velocesolo_dpi_10679/linux_gcc-4.5.0/exportwrapper.c
+# Loading /var/tmp/vijayem2@velocesolo_dpi_10679/linux_gcc-4.5.0/dpi_auto_compile.so
+# Generating         100 Packets
+# 
+#  Error: receive request (for Input pipe:
+#         (top.inputpipe_data.receive)
+#         from HDL cannot be fullfiled because HVL is not pushing data into buffer..
+# 
+# 
+# ** Note: $finish    : /pkgs/mentor/veloce/v2113/TBX_v2.4.4.1/scemi_pipe_sim/hdl/scemi_pipe_ifs.sv(192)
+#    Time: 288640 ns  Iteration: 1  Instance: /top
+# ------------------------------------------------------------------------------------------------------
+# ----------------------------------------ASSERTION SCOREBOARD------------------------------------------
+# ******************************************************************************************************
+# TYPE OF CHECK				TOTAL COUNT		PASS COUNT		FAIL COUNT 
+# ------------------------------------------------------------------------------------------------------
+#  Bus IDLE Check		          1		          1		          0      
+#  Bit Stuffing Check		    688		        525		        163      
+#  CRC Delimiter check		    101		        100		          1      
+#  ACK Check			        101		        101		          0      
+#  ACK Delimiter Check		    101		        100		          1      
+#  EOF Check			        100		         99		          1      
+#  Overload Check		        100		        100		          0      
+# *******************************************************************************************************
+# -------------------------------------------------------------------------------------------------------
+# ------------------------------------BUS TRANSACTION SCOREBOARD-----------------------------------------
+# No. of Transactions:				        120
+# No. of Transactions Re-attempted:		     20
+# No. of Transactions Successful:		    100
+# Percent Successful:				         83%
+# HDL Output Queue:93
+# -------------------------------------------------------------------------------------------------------
+# ----------------------------------------STIMULUS SCOREBOARD--------------------------------------------
+# No.Of Packets generated:			        100
+# No.Of Data Packets:				         93
+# No.Of Req Packets:				          7
+# -------------------------------------------------------------------------------------------------------
+# ------------------------------------------PACKET COUNTS------------------------------------------------
+# No.of Packets Revieved:			         93
+# No.Of Lost Packets:		       		      0
+# HVL Output Queue:93
