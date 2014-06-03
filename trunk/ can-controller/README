@@ -34,6 +34,6 @@ The above command launches simulation and generates 1000 random(yet constrained!
 --------------------NOTE ON VELOCE-----------------------
 - Even though design was synthesized in veloce we faced few problems
 
-- In veloce mode we had errors stating some of the constructs like enums were not supported, so we included the DUT and other HDL files as XRTL modules in tbx.config which removed them (not sure why)
+- In veloce mode we had errors stating some of the constructs like enums were not supported, so we included the DUT and other HDL files as XRTL modules in tbx.config which removed most of the errors (not sure why)
 
 - Also we had some cycle mismatches in veloce mode which result in some packet losses, even though the same test run was successful in TBX puresim.

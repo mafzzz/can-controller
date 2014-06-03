@@ -1,5 +1,5 @@
-//This is a stats of our design synthesized in veloce(4 CAN nodes with 500 Input packets & Random Error Inject)
-// but we had few ,unusual packet losses even though the same test run was successful in TBX puresim
+//This is a stats of our design synthesized in veloce, but we had few
+//unusual packet losses even though the same test run was successful in TBX puresim
 
 
 # =============================================================================

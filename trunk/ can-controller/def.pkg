@@ -3,7 +3,7 @@
 package definitions;
 //CAN Bus parameters
 
-parameter Total_Nodes = 4;		//No. of CAN Codes specified at compile time		
+parameter Total_Nodes = 4;		//No. of CAN Nodes specified at compile time		
 parameter CLOCK_CYCLE=20;
 parameter DUTY_CYCLE=2;
 
