@@ -150,10 +150,11 @@ begin
 	begin
 	
 		if(|data_in_req && ~(|Retransmit))				//If any node requests data & no node wants to Retransmit							
-		inputpipe_data.receive(1,ne_valid,packets,eop);			//Pull packet from input SCEMI pipe
-		`ifndef VELOCE
-		Input_queue.push_front(packets);					//Else retransmit old packet with new ID's
-		`endif
+		begin
+			inputpipe_data.receive(1,ne_valid,packets,eop);			//Pull packet from input SCEMI pipe
+			`ifndef VELOCE
+			Input_queue.push_front(packets);					//Else retransmit old packet with new ID's
+			`endif
 		end
 		for(int i=0;i<=(Total_Nodes-1);i++)
 		begin
@@ -163,35 +164,36 @@ begin
 				 Tx_ID[i]=ID[i];				//And Tx Identifier for that node
 			end
 			else if(Retransmit[i])   Tx_ID[i]=0;		//If node wants to Retransmit old data due to Bus error in previous transaction
-														//Don't provide new data packet but configure it with a High priority ID until data successfully 
-														//transmits across bus
-														
-				 if((i%2))Rx_ID[i-1]=Tx_ID[i];			//In all cases make sure that there is always one receiver configured to accept the sent data
-				 else	  Rx_ID[i+1]=Tx_ID[i];
-		
-		end
+			begin											//Don't provide new data packet but configure it with a High priority ID until 
+				if((i%2))Rx_ID[i-1]=Tx_ID[i];										//data successfully transmits across bus
+				 else	  Rx_ID[i+1]=Tx_ID[i];			//In all cases make sure that there is always one receiver configured to accept the 
+																	//sent data
+			end
 		   
 			 
-	end
+		end
 	 
-	
+	end
 end
 
 
-end
+
 
 //check if any slave has data that it accepted after the current transaction
 //If so move data to HVL side via SCEMI pipe for Scoreboard purpose
 always@(posedge clock)	
-for(int i=0;i<=(Total_Nodes-1);i++) begin
-if(data_out_req[i])	
-begin 
-outputpipe.send(1,Rx_packet[i],1); 
-`ifndef VELOCE
-Output_queue.push_front(Rx_packet[i]);
-`endif
+begin
+	for(int i=0;i<=(Total_Nodes-1);i++)
+	begin
+		if(data_out_req[i])	
+		begin 
+			outputpipe.send(1,Rx_packet[i],1); 
+			`ifndef VELOCE
+			Output_queue.push_front(Rx_packet[i]);
+			`endif
+		end
+	end
 end
-
 endmodule
 
 

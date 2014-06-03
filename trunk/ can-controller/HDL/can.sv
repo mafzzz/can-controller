@@ -243,8 +243,8 @@ module can
 		BUS_OFF:		begin state<=BUS_OFF;data<=`REC; end				//Bus off state
 		 
 		 endcase
-	 end:no_reset
- end:generate procedural block
+	 end
+ end
  
  //Checker procedural block - Performs Bit error,ACK error & Arbitration status by sampling CAN data line
  always_ff @(negedge clock)
@@ -315,8 +315,8 @@ SLAVE:			begin
 									SLAVE_ACK<=1'b1; 		//If Recessive,send ACK on line
 								end
 								else	state<=Rx_ERROR; 		//else flag CRC DELIM ERROR
-							end:CRC_COUNT>CRC_SIZE
-						end:CRC_CHK
+							end
+						end
 						
 					else if(SLAVE_EOF)			//Once successfully ACK'ed, wait for master to output EOF & IFS frames
 					begin
@@ -338,14 +338,14 @@ SLAVE:			begin
 																																	//states
 								else	if (Rx_Ecount) 			Rx_Ecount<=Rx_Ecount-1'b1;					//after successful slave 
 																															//transaction
-							end:COUNT END
+							end
 					
-					end:SLAVE EOF
+					end
 				end
 					
 
 endcase
-end:Checker Block
+end
 
 //Task to pack Data packet
 task automatic Data_Frame_Pack(ref Can_packet packet);
