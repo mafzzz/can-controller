@@ -41,7 +41,7 @@ begin
 					begin
 						flag<=1'b1;
 						count0<=0;
-					end:0's Check
+					end
 				else
 					begin
 						count0<=count0+1'b1;
