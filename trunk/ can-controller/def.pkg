@@ -21,7 +21,7 @@ parameter	DELIM_SIZE=8;
 parameter	FLAG_SIZE=6;
 
 parameter	DATA_START=19;
-const bit [CRC_SIZE:0] CRC_Poly=16'hC599;   //CRC Polynomial - Refer Bosch Spec document
+const bit [CRC_SIZE:0] CRC_Poly=16'hC599;
 
 //Struct typedef for Data & req Frames
 typedef struct packed{

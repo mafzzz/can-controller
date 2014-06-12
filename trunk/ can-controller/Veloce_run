@@ -1,4 +1,4 @@
-//This is a stats of our design synthesized in veloce, but we had few
+//This is a stats of our design synthesized in veloce(4 nodes with 500 packets), but we had few
 //unusual packet losses even though the same test run was successful in TBX puresim
 
 

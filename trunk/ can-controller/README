@@ -7,6 +7,7 @@ Makefile	-	To compile,build & launch emulation
 tbx.config	-	Configuration settings about design partition and target emulator
 Sample_transcript	-	Transcripts for one of our emulation runs
 Veloce				-	Statistics of our veloce run
+Docs				-	Bosch's CAN SPEC & Final ppt
 
 -------------------------------------------------------
 --------------------DIRECTIONS-------------------------
@@ -37,3 +38,13 @@ The above command launches simulation and generates 1000 random(yet constrained!
 - In veloce mode we had errors stating some of the constructs like enums were not supported, so we included the DUT and other HDL files as XRTL modules in tbx.config which removed most of the errors (not sure why)
 
 - Also we had some cycle mismatches in veloce mode which result in some packet losses, even though the same test run was successful in TBX puresim.
+
+---------------------------------------------------------
+--------------------SVN SETUP----------------------------
+1. Install an SVN application such as TortoiseSVN: http://tortoisesvn.net/downloads.html
+2. Create in new folder in the location of your choice.
+3. Right-click it and click on SVN Checkout. In the dialogue box that appears, paste the URL from the Google Code link provided in Wiki.(Go to the Source tab to find a URL)
+4. Create a Questa project in any another folder (local copy) and in 'add existing files', link the .sv files from the SVN directory:
+<yourSVNfolder>/trunk/src/rev1
+5. Compile your project and then simulate it
+NOTE: If you get an error after you simulate which says "work.blahblah package has changed", re-compile and then re-simulate.
