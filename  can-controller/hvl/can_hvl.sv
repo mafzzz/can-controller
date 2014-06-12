@@ -5,6 +5,7 @@
 //
 //
 
+`include "def.pkg"
 import xtlm_pkg::*; // For trans-language TLM channels.
 
 import definitions::*;
