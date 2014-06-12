@@ -27,7 +27,7 @@ NumberofPackets = Number of packets to be generated
 
 
 e.g.
-vsim -novopt top booth_hvl TbxSvManager +PACKETS=1000
+vsim -novopt top can_hvl TbxSvManager +PACKETS=1000
 
 The above command launches simulation and generates 1000 random(yet constrained!) test packets
 
