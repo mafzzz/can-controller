@@ -16,7 +16,7 @@ To compile for PureSim mode:
 make puresim 
 
 To compile for Veloce mode:
-(Make sure that that the `define VELOCE & `define ASSERT_EN complier directives in 'def.pkg' file are un-commented)
+(Make sure that that the `define VELOCE complier directive in 'def.pkg' file is un-commented & `define ASSERT_EN is commented out - refer explanation below)
 
 make veloce 
 
@@ -36,8 +36,8 @@ A variety of flags are available are available in def.pkg for different operatio
 
 `define VELOCE			-	Un-comment for Veloce mode (removes non-synthesizable constructs)
 `define ASSERT_EN		-	Un-comment to enable Concurrent assertions(should be commented for Veloce run)
-`define DEBUG			-	Enable Debug mode(automatically disabled in Veloce mode)
-`define ERROR_INJECT	-	Inject Random CRC errors (based on weighted constraints) into packets
+`define DEBUG			-	Un-comment to Enable Debug mode(automatically disabled in Veloce mode)
+`define ERROR_INJECT	-	Un-comment to Inject Random CRC errors (based on weighted constraints) into packets
 
 ---------------------------------------------------------
 --------------------NOTE ON VELOCE-----------------------
