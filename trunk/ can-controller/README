@@ -16,6 +16,7 @@ To compile for PureSim mode:
 make puresim 
 
 To compile for Veloce mode:
+(Make sure that that the `define VELOCE & `define ASSERT_EN complier directives in 'def.pkg' file are un-commented)
 
 make veloce 
 
@@ -31,11 +32,26 @@ vsim -novopt top can_hvl TbxSvManager +PACKETS=1000
 
 The above command launches simulation and generates 1000 random(yet constrained!) test packets
 
+A variety of flags are available are available in def.pkg for different operation modes:
+
+`define VELOCE			-	Un-comment for Veloce mode (removes non-synthesizable constructs)
+`define ASSERT_EN		-	Un-comment to enable Concurrent assertions(should be commented for Veloce run)
+`define DEBUG			-	Enable Debug mode(automatically disabled in Veloce mode)
+`define ERROR_INJECT	-	Inject Random CRC errors (based on weighted constraints) into packets
+
 ---------------------------------------------------------
 --------------------NOTE ON VELOCE-----------------------
 - Even though design was synthesized in veloce we faced few problems
 
-- In veloce mode we had errors stating some of the constructs like enums were not supported, so we included the DUT and other HDL files as XRTL modules in tbx.config which removed most of the errors (not sure why)
+- In veloce mode we had errors stating some of the constructs like enums were not supported, so we included the DUT and other HDL files as XRTL modules in tbx.config which removed most of the errors (not sure why). So In case you have issues while running in veloce mode, include all files in hdl/ path as XRTL modules. You're tbx.config file will look like below:
+
+rtlc -partition_module_xrtl top
+rtlc -partition_module_xrtl clock_gen
+rtlc -partition_module_xrtl can_bus
+rtlc -partition_module_xrtl can
+rtlc -partition_module_xrtl bitstuff
+comp -questa
+velsyn -D1S
 
 - Also we had some cycle mismatches in veloce mode which result in some packet losses, even though the same test run was successful in TBX puresim.
 
