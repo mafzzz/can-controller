@@ -16,7 +16,7 @@ To compile for PureSim mode:
 make puresim 
 
 To compile for Veloce mode:
-(Make sure that that the `define VELOCE complier directive in 'def.pkg' file is un-commented & `define ASSERT_EN is commented out - refer explanation below)
+(Make sure that that the `define VELOCE complier directive in 'def.pkg' file is un-commented & `define ASSERT_EN is commented out - refer to Notes On Veloce below)
 
 make veloce 
 
@@ -40,7 +40,7 @@ A variety of flags are available are available in def.pkg for different operatio
 `define ERROR_INJECT	-	Un-comment to Inject Random CRC errors (based on weighted constraints) into packets
 
 ---------------------------------------------------------
---------------------NOTE ON VELOCE-----------------------
+--------------------NOTES ON VELOCE-----------------------
 - Even though design was synthesized in veloce we faced few problems
 
 - In veloce mode we had errors stating some of the constructs like enums were not supported, so we included the DUT and other HDL files as XRTL modules in tbx.config which removed most of the errors (not sure why). So In case you have issues while running in veloce mode, include all files in hdl/ path as XRTL modules. You're tbx.config file will look like below:
